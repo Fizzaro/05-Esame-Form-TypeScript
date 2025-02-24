@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form page</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+    crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="pag_form.js"></script>
+  <script>
+    
+    // Richiamo le funzioni per validare tutto il form
+    function validator() {
+        let complete = true;
+        if (!CControllaForm.validaStyle('nome', 'lbnome', CControllaForm.validazioneStringaShort) |
+            !CControllaForm.validaStyle('cognome', 'lbcognome', CControllaForm.validazioneStringaShort) |
+            !CControllaForm.validaSel(document.formRegister.flexRadioDefault, 'lbsel') |
+            !CControllaForm.validaStyle('nascita', 'lbnascita', CControllaForm.validazioneStringaLong) |
+            !CControllaForm.validaData('data', 'lbdata') |
+            !CControllaForm.validaCF('codFisc', 'lbcodFisc', 'msgCF') |
+            !CControllaForm.validaStyle('comune', 'lbcomune', CControllaForm.validazioneStringaLong) |
+            !CControllaForm.validaStyle('email', 'lbemail', CControllaForm.validazioneEmail) |
+            !CControllaForm.validaStyle('indirizzo', 'lbindirizzo', CControllaForm.validazioneStringaLong) |
+            !CControllaForm.validaStyle('cap', 'lbcap', CControllaForm.validaCap) |
+            !CControllaForm.validaCheck('privacy', 'lbprivacy') |
+            !CControllaForm.controllaPassword(objInput, objAlert, objBar) |
+            !CControllaForm.validaPassword('password', 'passwordRepeat', 'lbpassword', 'lbrepeat', 'alertPassword')) {
+                complete = false;
+        }
+        return complete;
+    }
+
+    window.onload = function () {
+        //attivo Modal automaticamente
+        const myModal = document.getElementById('pulsante');
+        myModal.click();
+
+        // Imposto il validatore del form in modo da bloccare il caricamento della pagina se qualcosa non va
+        const form = document.getElementsByTagName('form')[0];
+        if (form) {
+            objInput = document.getElementById('password');
+            objAlert = document.getElementById('alertPassword');
+            objBar = document.getElementById('barPassword');
+            // Controllo la robustezza della password man mano che viene inserita
+            objInput.addEventListener('keyup', function(){
+                CControllaForm.controllaPassword(objInput, objAlert, objBar);
+            });
+
+            // Blocco il submit se non passano tutte le validazioni
+            form.addEventListener("submit", function (e) {
+                if (!validator()) {
+                  e.preventDefault();
+                } else {
+                  e.preventDefault();
+                  const prova= {
+                    nome: form.nome.value,
+                    cognome: form.cognome.value,
+                    sesso: form.flexRadioDefault.value,
+                    comuneNascita: form.nascita.value,
+                    dataNascita: form.data.value,
+                    codFiscale: form.codFisc.value,
+                    indirizzo: form.indirizzo.value,
+                    comune: form.comune.value,
+                    cap: form.cap.value,
+                    email: form.email.value,
+                    password: form.password.value,
+                  };
+                  const uForm= new CForm(prova);
+                  console.log(uForm.getUtente());
+                  console.log(uForm.getCredenziali());
+                  console.log(uForm.getIndirizzo());
+                }
+            });
+        }
+    }
+  </script>
+
+  <style>
+   #cont-img {
+      background: url(2506219.jpg);
+      background-repeat: no-repeat;
+      background-size: auto;
+      min-height: 65vh;
+    }
+
+    .modal-body {
+      overflow-x: hidden;
+    }
+
+    p {
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    label, #campiObb {
+      text-shadow:
+        1px 1px 1px plum,
+        -1px 1px 1px plum,
+        -1px -1px 0 plum,
+        1px -1px 0 plum;
+    }
+
+    #campiObb {
+      font-size: small;
+      color:yellow;
+    }
+
+    #msgCF {
+        max-width: fit-content;
+        color:yellow;
+    }
+
+    #alertPassword {
+        color:cyan;
+        font-size: large;
+    }
+
+    #barPassword {
+        height: 8px;
+    }
+
+    #lbprivacy {
+        font-size: small;
+    }
+
+  </style>
+</head>
+
+<body class="bg-secondary m-0 p-0">
+
+  <!-- Button trigger modal-->
+  <button type="button" class="btn btn-primary" id="pulsante" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+    hidden>
+    Launch static backdrop modal
+  </button>
+
+  <!-- Modal in primo piano centrale alla pagina per la registrazione -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered text-center pt-5 p-lg-5" id="modalDialog">
+      <div class="modal-content bg-secondary text-white p-1 rounded-0 border-start border-3 border-end"
+        style="--bs-bg-opacity: .9;">
+        <div class="modal-header row p-1">
+          <h1 class="modal-title fs-4" id="staticBackdropLabel" style="opacity: 1;">Inserisci i dati per la registrazione</h1>
+        </div>
+        <div class="modal-body p-1 my-auto">
+          <form class="row justify-content-center" name="formRegister">
+            <div class="col-12 col-md-6 col-xl-7 px-3">
+                <fieldset class="mt-3">
+                    <legend class="m-0">Dati anagrafici</legend>
+                        <div class="row py-2">
+                            <div class="col-12 col-lg-4 d-flex align-items-center">
+                                <label class="form-label my-auto" for="nome" id="lbnome">Nome</label>
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <input class="form-control" type="text" id="nome" name="nome">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-12 col-lg-4 d-flex align-items-center">
+                                <label class="form-label my-auto" for="cognome" id="lbcognome">Cognome</label>
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <input class="form-control" type="text" id="cognome" name="cognome">
+                            </div>
+                        </div>
+                        <div class="row py-3">
+                            <div class="col-3 col-lg-4 d-flex align-items-center">
+                                <label class="form-label my-auto" id="lbsel">Sesso</label>
+                            </div>
+                            <div class="form-check col-3">
+                                <label class="form-check-label" for="maschio">maschio</label>
+                            </div>
+                            <div class="form-check col-1">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="maschio" value="maschio">
+                            </div>
+                            <div class="form-check col-3">
+                                <label class="form-check-label" for="femmina">femmina</label>
+                            </div>
+                            <div class="form-check col-1">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="femmina" value="femmina">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-12 col-lg-5 d-flex align-items-center">
+                                <label class="form-label my-auto" for="nascita" id="lbnascita">Comune di nascita</label>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <input class="form-control" type="text" name="nascita" id="nascita">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-12 col-lg-5 d-flex align-items-center">
+                                <label class="form-label my-auto" for="data" id="lbdata">Data di nascita</label>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <input class="form-control" type="date" name="data" id="data">
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-12 col-lg-5 d-flex align-items-center">
+                                <label class="form-label my-auto" for="codFisc" id="lbcodFisc">Codice fiscale</label>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <input class="form-control" type="text" name="codFisc" id="codFisc">
+                            </div>
+                            <div class="col-12 col-lg-7 ms-auto p-2" id="msgCF"></div>
+                        </div>
+                </fieldset>
+            </div>
+            <div class="col-12 col-md-6 col-xl-7 px-3">
+                <fieldset class="mt-3">
+                    <legend class="m-0">Recapito</legend>
+                    <div class="row py-2">
+                        <div class="col-12 col-lg-4 d-flex align-items-center">
+                            <label class="form-label my-auto" for="indirizzo" id="lbindirizzo">Indirizzo</label>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                            <input class="form-control" type="text" id="indirizzo" name="indirizzo">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-12 col-lg-2 d-flex align-items-center">
+                            <label class="form-label my-auto" for="cap" id="lbcap" name="cap">CAP</label>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <input class="form-control" type="text" id="cap" name="cap">
+                        </div>
+                        <div class="col-12 col-lg-2 py-2 d-flex align-items-center">
+                            <label class="form-label my-auto" for="comune" id="lbcomune">Comune</label>
+                        </div>
+                        <div class="col-12 col-lg-5">
+                            <input class="form-control" type="text" id="comune" name="comune">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mt-3">
+                    <legend class="m-0">Credenziali</legend>
+                    <div class="row py-2">
+                        <div class="col-12 col-lg-4 d-flex align-items-center">
+                            <label class="form-label my-auto" for="email" id="lbemail">Email</label>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                          <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-12 col-lg-4 d-flex align-items-center">
+                            <label class="form-label my-auto" for="password" id="lbpassword">Password</label>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                          <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-12 col-lg-4 d-flex align-items-center">
+                            <label class="form-label my-auto" for="passwordRepeat" id="lbrepeat">Ripeti Password</label>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                          <input type="password" class="form-control" id="passwordRepeat" name="passwordRepeat">
+                        </div>
+                    </div>
+                    <div id="barPassword"></div>
+                    <div id="alertPassword"></div>
+                </fieldset>
+            </div>
+            <div class="col-12 pt-3 m-auto">
+                <button class="btn btn-danger" type="submit" id="formSub">Registrati</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex flex-row p-1 mx-3 justify-content-center">
+            <div class="col-md-6"><label for="privacy" id="lbprivacy"><input type="checkbox" id="privacy" name="privacy" form="formRegister" required>
+                Con la registrazione autorizzo il trattamento dei dati personali presenti
+                 ai sensi del D. Lgs. 2018/101 e del GDPR (Regolamento UE 2016/679).</label>
+            </div>
+            <div class="col-md-4"><p id="campiObb">Tutti i campi sono obbligatori!</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home page di sfondo -->
+  <div class="container-lg m-0 p-0 m-lg-auto px-lg-5">
+
+    <!-- Barra di navigazione espandibile con logo, titolo e pulsante-->
+    <nav class="navbar navbar-expand-md bg-black">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white" href="#">CODEX</a>
+        <button class="navbar-toggler bg-white" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon bg-white"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav m-1">
+            <li class="nav-item m-1">
+              <a class="nav-link active text-white" aria-current="page" href="#">Pagina iniziale</a>
+            </li>
+            <li class="nav-item position-absolute end-0 m-1">
+              <button class="btn btn-danger" type="submit">Accedi</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenitore principale con immagine di sfondo -->
+    <div class="col-12" id="cont-img"></div>
+
+    <!-- Footer -->
+    <footer class="container-lg text-center mt-25 bg-dark">
+      <div class="row align-items-start p-3">
+        <div class="col-12 col-md-4 align-items-start">
+          <p>About</p>
+          <p>About</p>
+          <p>About</p>
+        </div>
+        <div class="col-12 col-md-4 align-items-start">
+          <p>About</p>
+          <p>About</p>
+          <p>About</p>
+        </div>
+        <div class="col-12 col-md-4 align-items-start">
+          <p>About</p>
+          <p>About</p>
+          <p>About</p>
+        </div>
+        <div class="row-12 align-items-center">
+          <p>Copyright CODEX</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</body>
+
+</html>
